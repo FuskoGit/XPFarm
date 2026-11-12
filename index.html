@@ -320,8 +320,8 @@ function terminal(t){wallpaper();mainChrome(t>T0?'trading':'booting');
 let scale=1,offX=0,offY=0;
 function resize(){const d=window.devicePixelRatio||1;c.width=innerWidth*d;c.height=innerHeight*d;scale=Math.min(c.width/W,c.height/H);offX=(c.width-W*scale)/2;offY=(c.height-H*scale)/2}
 addEventListener('resize',resize);resize();
-function now(){return performance.now()/1000}
-function loop(){const T=now();g.setTransform(1,0,0,1,0,0);g.fillStyle='#000';g.fillRect(0,0,c.width,c.height);
+function now(){return window.__T!==undefined?window.__T:performance.now()/1000}
+function drawFrame(){const T=now();g.setTransform(1,0,0,1,0,0);g.fillStyle='#000';g.fillRect(0,0,c.width,c.height);
  g.setTransform(scale,0,0,scale,offX,offY);g.save();g.beginPath();g.rect(0,0,W,H);g.clip();g.globalAlpha=1;
  if(S.phase=='desk')desktop(T);
  else if(S.phase=='open'){desktop(T);const k=ez((T-S.openAt)/.5);const {x:ix,y:iy,w:iw}=ICON;const x=lerp(ix,0,k),y=lerp(iy,0,k),w=lerp(iw,W,k),h=lerp(iw,H,k);
@@ -330,14 +330,16 @@ function loop(){const T=now();g.setTransform(1,0,0,1,0,0);g.fillStyle='#000';g.f
  else if(S.phase=='splash')splash(T);
  else if(S.phase=='fade'){const k=(T-S.runAt);splash(T);g.fillStyle=`rgba(0,0,0,${eo(k/.35)})`;g.fillRect(0,0,W,H);if(k>.35){S.phase='run';S.runAt=T}}
  else if(S.phase=='run'){const t=4.6+(T-S.runAt);ensure(t);terminal(t);if(t<4.9){g.fillStyle=`rgba(0,0,0,${1-eo((t-4.6)/.3)})`;g.fillRect(0,0,W,H)}}
- g.restore();requestAnimationFrame(loop)}
+ g.restore()}
+window.drawFrame=drawFrame;
+function loop(){drawFrame();requestAnimationFrame(loop)}
 requestAnimationFrame(loop);
 
 /* ================= input ================= */
 function toLogical(e){const d=window.devicePixelRatio||1;S.mx=(e.clientX*d-offX)/scale;S.my=(e.clientY*d-offY)/scale}
 function goFull(){const el=document.documentElement;if(!document.fullscreenElement&&el.requestFullscreen)el.requestFullscreen().catch(()=>{})}
 function launch(){goFull();S.phase='open';S.openAt=now();S.sel=false}
-function start(){if(!S.amount)S.amount='100';S.start=Math.max(1,Number(S.amount));K=S.start/100;S.focus=false;S.seed=Math.floor(Math.random()*1000);resetStreams();S.phase='fade';S.runAt=now();goFull()}
+function start(){if(!S.amount)S.amount='100';S.start=Math.max(1,Number(S.amount));K=S.start/100;S.focus=false;S.seed=QP.has('seed')?Number(QP.get('seed')):Math.floor(Math.random()*1000);resetStreams();S.phase='fade';S.runAt=now();goFull()}
 addEventListener('mousemove',e=>{toLogical(e);c.style.cursor=(S.phase=='desk'&&inR(ICON))||(S.phase=='splash'&&(inR(BTN)||inR(RBOX)||CHIPS.some(inR)))?'pointer':(S.phase=='splash'&&inR(INPUT)?'text':'default')});
 addEventListener('mousedown',e=>{toLogical(e);S.down=true;
  if(S.phase=='desk'){goFull();S.sel=inR(ICON)}

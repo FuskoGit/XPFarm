@@ -10,6 +10,20 @@ A Windows XP styled trading-desk **demo**. Pick a starting balance, press Start,
 |---|---|
 | ![Desktop](screenshots/desktop.jpg) | ![Setup](screenshots/setup.jpg) |
 
+## See it in action
+
+### What it does
+![What it does](gifs/01-what-it-does.gif)
+
+### How it works
+![How it works](gifs/02-how-it-works.gif)
+
+### How the % work
+![How the % work](gifs/03-how-the-percent-works.gif)
+
+### Trading tactics
+![Trading tactics](gifs/04-trading-tactics.gif)
+
 ## Run it
 
 No install, no build, no dependencies.
@@ -58,6 +72,7 @@ Pick the profile from the URL:
 index.html?risk=conservative
 index.html?risk=balanced
 index.html?risk=aggressive
+index.html?seed=31        replay the same session every time
 ```
 
 ## Panels
